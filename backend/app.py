@@ -1,28 +1,50 @@
-from flask import Flask, request, jsonify
-from analysis.fft_metrics import analyze_images
+"""
+Launching Flask
+Adding route files to the system
+Creating upload and results folders
+Returning a test message on the main page
+"""
 
-app = Flask(__name__)
+from flask import Flask
+from flask_cors import CORS
 
-@app.route("/analyze", methods=["POST"])
-def analyze():
-    try:
-        data = request.json
+from backend.routes.upload import upload_bp
+from backend.routes.process import process_bp
+from backend.routes.transform import transform_bp
+from backend.routes.analysis import analysis_bp
+from backend.routes.metrics import metrics_bp
+from backend.routes.export import export_bp
+from backend.modules.utils.helpers import ensure_dir
 
-        original_path = data.get("original")
-        transformed_path = data.get("transformed")
 
-        if not original_path or not transformed_path:
-            return jsonify({
-                "error": "Both 'original' and 'transformed' paths are required."
-            }), 400
+def create_app():
+    app = Flask(__name__)
+    CORS(app)
 
-        results = analyze_images(original_path, transformed_path)
+    app.config["UPLOAD_FOLDER"] = "static/uploads"
+    app.config["RESULT_FOLDER"] = "static/results"
+    app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024  # 10 MB
 
-        return jsonify(results)
+    ensure_dir(app.config["UPLOAD_FOLDER"])
+    ensure_dir(app.config["RESULT_FOLDER"])
 
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    app.register_blueprint(upload_bp, url_prefix="/upload")
+    app.register_blueprint(process_bp, url_prefix="/process")
+    app.register_blueprint(transform_bp, url_prefix="/transform")
+    app.register_blueprint(analysis_bp, url_prefix="/analyze")
+    app.register_blueprint(metrics_bp, url_prefix="/metrics")
+    app.register_blueprint(export_bp, url_prefix="/export")
 
+    @app.route("/")
+    def home():
+        return {
+            "message": "Facial Image Warping API is running."
+        }
+
+    return app
+
+
+app = create_app()
 
 if __name__ == "__main__":
     app.run(debug=True)

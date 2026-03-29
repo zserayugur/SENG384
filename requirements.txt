@@ -5,5 +5,5 @@ numpy
 matplotlib
 scikit-image
 pandas
-mediapipe
+mediapipe==0.10.13
 scipy

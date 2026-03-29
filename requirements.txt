@@ -7,3 +7,4 @@ scikit-image
 pandas
 mediapipe==0.10.13
 scipy
+pytest

@@ -1,0 +1,97 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* Linkleri dikeyde ortalamak için eklendi */
+    padding: 20px 60px;
+    z-index: 100;
+    font-family: 'DM Sans', sans-serif;
+    animation: fadeDown 0.6s ease both;
+    width: 100vw;
+    box-sizing: border-box;
+    position: absolute;
+    top: 40px;
+    left: 0;
+  }
+
+  .logo {
+   
+    position: absolute;
+    top: -20px; 
+    left: 50px;
+    width: 80px;
+    height: auto;
+    z-index: 1000;
+    transition: transform 0.3s ease;
+  }
+
+  .logo:hover {
+    transform: scale(1.05);
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 30px;
+    margin-left: auto; /* Linkleri sağa yaslamak için */
+  }
+
+  .nav-links a {
+    text-decoration: none;
+    color: #2a2a7a;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+
+  .nav-links a:hover {
+    color: #4646e5;
+  }
+
+  .logout-link {
+    color: #ff6b6b !important;
+    font-weight: 600;
+  }
+
+  .login-link {
+    color: #4646e5 !important;
+    font-weight: 600;
+    border: 1.5px solid rgba(70, 70, 229, 0.2);
+    padding: 8px 20px;
+    border-radius: 10px;
+    margin-top: -8px; /* Hizalama için küçük ayar */
+  }
+
+  .login-link:hover {
+    background: rgba(70, 70, 229, 0.05);
+    border-color: #4646e5;
+  }
+
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 20px; }
+    .logo { left: 20px; width: 60px; }
+  }
+</style>
+
+<nav>
+  <a href="{{ url_for('home') }}">
+    <img src="{{ url_for('static', filename='image/logo.png') }}" class="logo" alt="Logo">
+  </a>
+  <div class="nav-links">
+    <a href="{{ url_for('home') }}">Home</a>
+    <a href="{{ url_for('upload_page') }}">Upload</a>
+    <a href="{{ url_for('preview_page') }}">History</a>
+
+    {% if current_user.is_authenticated %}
+      <a href="{{ url_for('auth.logout') }}" class="logout-link">Logout</a>
+    {% else %}
+      <a href="{{ url_for('auth.login') }}" class="login-link">Login</a>
+    {% endif %}
+  </div>
+</nav>

@@ -1,50 +1,278 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Result Screen</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Results - Facial Image Analysis</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap');
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #f0f4ff 0%, #e8fcd4 50%, #f4f0ff 100%);
+      font-family: 'DM Sans', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Arka Plan Efektleri */
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+      opacity: 0.35;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .blob-1 { width: 320px; height: 320px; background: #b0b0ff; top: -80px; left: -80px; }
+    .blob-2 { width: 260px; height: 260px; background: #a8f0c0; bottom: -60px; right: -60px; }
+
+    /* İçerik Konteynırı */
+    .container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 100px 20px 60px;
+      width: 100%;
+      max-width: 1000px;
+      z-index: 5;
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 40px;
+      animation: fadeDown 0.6s ease both;
+    }
+
+    .badge {
+      display: inline-block;
+      background: rgba(70, 70, 229, 0.1);
+      color: #4646e5;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 100px;
+      margin-bottom: 16px;
+      border: 1px solid rgba(70, 70, 229, 0.2);
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 42px;
+      color: #2a2a7a;
+      margin-bottom: 10px;
+    }
+
+    /* Kart Yapıları */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      width: 100%;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255,255,255,0.85);
+      border-radius: 24px;
+      padding: 30px;
+      box-shadow: 0 15px 45px rgba(70, 70, 229, 0.08);
+      animation: fadeUp 0.7s ease both;
+    }
+
+    .card.full-width { grid-column: span 2; }
+
+    h2 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #2a2a7a;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Analiz Bölümü */
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #6060aa;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1.5px solid rgba(70, 70, 229, 0.1);
+      background: rgba(255, 255, 255, 0.5);
+      color: #4646e5;
+      font-family: inherit;
+    }
+
+    #analyzeBtn {
+      width: 100%;
+      padding: 14px;
+      border-radius: 14px;
+      border: none;
+      background: linear-gradient(135deg, #6060e5, #4646e5);
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 20px rgba(70, 70, 229, 0.25);
+    }
+
+    #analyzeBtn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(70, 70, 229, 0.35);
+    }
+
+    /* Veri Alanları */
+    .data-box {
+      background: rgba(70, 70, 229, 0.04);
+      border-radius: 16px;
+      padding: 15px;
+      color: #4a4a8a;
+      font-size: 14px;
+      min-height: 100px;
+      border: 1px solid rgba(70, 70, 229, 0.05);
+    }
+
+    /* Spektrum Görüntüleri */
+    .image-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .spectrum-box {
+      text-align: center;
+    }
+
+    .spectrum-box p {
+      font-size: 12px;
+      color: #6060aa;
+      margin-bottom: 10px;
+    }
+
+    .img-frame {
+      width: 100%;
+      aspect-ratio: 1;
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(70, 70, 229, 0.1);
+    }
+
+    .img-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-grid { grid-template-columns: 1fr; }
+      .card.full-width { grid-column: span 1; }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Result Screen</h1>
 
-        <div class="card">
-            <label for="original">Original Image Path</label>
-            <input type="text" id="original" value="images/original.jpg">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
 
-            <label for="transformed">Transformed Image Path</label>
-            <input type="text" id="transformed" value="images/transformed.jpg">
+  {% include 'base.html' %}
 
-            <button id="analyzeBtn">Analyze</button>
-        </div>
-
-        <div class="card">
-            <h2>Metrics</h2>
-            <div id="metricsResult">No results yet.</div>
-        </div>
-
-        <div class="card">
-            <h2>Energy Analysis</h2>
-            <div id="energyResult">No results yet.</div>
-        </div>
-
-        <div class="card">
-            <h2>Spectrum Images</h2>
-            <div class="image-grid">
-                <div>
-                    <p>Original Spectrum</p>
-                    <img id="originalSpectrum" src="" alt="Original Spectrum">
-                </div>
-                <div>
-                    <p>Transformed Spectrum</p>
-                    <img id="transformedSpectrum" src="" alt="Transformed Spectrum">
-                </div>
-            </div>
-        </div>
+  <div class="container">
+    <div class="page-header">
+      <div class="badge">Final Analysis</div>
+      <h1>Diagnostic Results</h1>
     </div>
 
-    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <div class="dashboard-grid">
+      <div class="card">
+        <h2>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          System Control
+        </h2>
+        <div class="input-group">
+          <label>Original Image Source</label>
+          <input type="text" id="original" value="images/original.jpg" readonly>
+        </div>
+        <div class="input-group">
+          <label>Transformed Image Source</label>
+          <input type="text" id="transformed" value="images/transformed.jpg" readonly>
+        </div>
+        <button id="analyzeBtn">Run Analysis</button>
+      </div>
+
+      <div class="card">
+        <h2>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20v-6M6 20V10M18 20V4"/></svg>
+          Metrics
+        </h2>
+        <div id="metricsResult" class="data-box">No results yet. Run analysis to see details.</div>
+      </div>
+
+      <div class="card full-width">
+        <h2>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          Energy Analysis
+        </h2>
+        <div id="energyResult" class="data-box">Energy distribution data will appear here.</div>
+      </div>
+
+      <div class="card full-width">
+        <h2>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 12h18M12 3v18"/></svg>
+          Spectrum Images
+        </h2>
+        <div class="image-grid">
+          <div class="spectrum-box">
+            <p>Original Spectrum</p>
+            <div class="img-frame">
+              <img id="originalSpectrum" src="" alt="Waiting for data...">
+            </div>
+          </div>
+          <div class="spectrum-box">
+            <p>Transformed Spectrum</p>
+            <div class="img-frame">
+              <img id="transformedSpectrum" src="" alt="Waiting for data...">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 </body>
 </html>

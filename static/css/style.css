@@ -101,7 +101,7 @@ nav a:hover {
     transition: all 0.3s ease;;
 }
 .logo {
-    position: fixed;   /* sayfada sabit kalır */
+    position: absolute;   /* sayfada sabit kalır */
     top: 20px;         /* yukarıdan boşluk */
     left: 50px;        /* soldan boşluk */
     width: 80px;       /* boyut */

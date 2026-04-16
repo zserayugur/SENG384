@@ -1,31 +1,239 @@
 <!DOCTYPE html>
 <html lang="en">
+    
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Controls Screen</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <meta charset="UTF-8">
+  <meta name="viewport"  initial-scale=1.0">
+  <title>Controls - Facial Image Analysis</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap');
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #f0f4ff 0%, #e8fcd4 50%, #f4f0ff 100%);
+      font-family: 'DM Sans', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Arka Plan Efektleri */
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+      opacity: 0.35;
+      pointer-events: none;
+    }
+    .blob-1 { width: 320px; height: 320px; background: #b0b0ff; top: -80px; left: -80px; }
+    .blob-2 { width: 260px; height: 260px; background: #a8f0c0; bottom: -60px; right: -60px; }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 40px;
+      animation: fadeDown 0.6s ease both;
+    }
+
+    .badge {
+      display: inline-block;
+      background: rgba(70, 70, 229, 0.1);
+      color: #4646e5;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 100px;
+      margin-bottom: 16px;
+      border: 1px solid rgba(70, 70, 229, 0.2);
+    }
+
+    .page-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 42px;
+      color: #2a2a7a;
+      line-height: 1.2;
+    }
+
+    /* Kart Tasarımı */
+    .card {
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255,255,255,0.85);
+      border-radius: 28px;
+      padding: 44px 48px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 0 20px 60px rgba(70, 70, 229, 0.1);
+      animation: fadeUp 0.7s 0.15s ease both;
+    }
+
+    .control-group {
+      margin-bottom: 30px;
+    }
+
+    .field-label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: #6060aa;
+      margin-bottom: 14px;
+      display: block;
+    }
+
+    /* Select Stil */
+    select {
+      width: 100%;
+      padding: 14px 18px;
+      border-radius: 14px;
+      border: 1.5px solid rgba(70, 70, 229, 0.15);
+      background: rgba(255, 255, 255, 0.6);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      color: #2a2a7a;
+      appearance: none;
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%234646e5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      background-size: 18px;
+      transition: all 0.3s ease;
+    }
+
+    select:focus {
+      outline: none;
+      border-color: #4646e5;
+      background-color: white;
+    }
+
+    /* Range/Slider Stil */
+    .slider-container {
+      padding: 10px 0;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      background: rgba(70, 70, 229, 0.1);
+      border-radius: 5px;
+      outline: none;
+      margin: 20px 0;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 22px;
+      height: 22px;
+      background: #4646e5;
+      border: 3px solid white;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(70, 70, 229, 0.3);
+      transition: transform 0.2s ease;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+    }
+
+    .intensity-value {
+      text-align: center;
+      font-weight: 600;
+      color: #4646e5;
+      font-size: 18px;
+      margin-top: -10px;
+      display: block;
+    }
+
+    /* Buton Stil */
+    .nav-btn {
+      width: 100%;
+      padding: 15px;
+      border-radius: 14px;
+      text-decoration: none;
+      background: linear-gradient(135deg, #6060e5, #4646e5);
+      color: white;
+      font-size: 15px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 24px rgba(70, 70, 229, 0.35);
+    }
+
+    .nav-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 32px rgba(70, 70, 229, 0.45);
+    }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Controls Screen</h1>
+{% include 'base.html' %}
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
 
-        <div class="card">
-            <label for="transformation">Select Transformation</label>
-            <select id="transformation">
-                <option>Smile Enhancement</option>
-                <option>Eyebrow Raising</option>
-                <option>Lip Widening</option>
-                <option>Face Slimming</option>
-                <option>Aging</option>
-                <option>De-Aging</option>
-            </select>
+  <div class="page-header">
+    <div class="badge">Ajustment Studio</div>
+    <h1>Refine Results</h1>
+  </div>
 
-            <label for="intensity">Intensity</label>
-            <input type="range" id="intensity" min="0" max="100" value="50">
-
-            <a class="nav-btn" href="/preview">Next: Preview</a>
-        </div>
+  <div class="card">
+    <div class="control-group">
+      <span class="field-label">Select Transformation</span>
+      <select id="transformation">
+        <option>Smile Enhancement</option>
+        <option>Eyebrow Raising</option>
+        <option>Lip Widening</option>
+        <option>Face Slimming</option>
+        <option>Aging</option>
+        <option>De-Aging</option>
+      </select>
     </div>
+
+    <div class="control-group">
+      <span class="field-label">Intensity Level</span>
+      <div class="slider-container">
+        <input type="range" id="intensity" min="0" max="100" value="50" oninput="updateValue(this.value)">
+        <span class="intensity-value" id="valDisplay">50%</span>
+      </div>
+    </div>
+
+    <a class="nav-btn" href="{{ url_for('preview_page') }}">
+      Next: Preview Results
+      <svg viewBox="0 0 24 24" stroke-width="2">
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+        <polyline points="12 5 19 12 12 19"></polyline>
+      </svg>
+    </a>
+  </div>
+
+  <script>
+    function updateValue(val) {
+      document.getElementById('valDisplay').textContent = val + '%';
+    }
+  </script>
+
 </body>
 </html>

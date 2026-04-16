@@ -1,43 +1,267 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Account - Facial Image Analysis</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap');
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #f0f4ff 0%, #e8fcd4 50%, #f4f0ff 100%);
+      font-family: 'DM Sans', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Arka Plan Efektleri */
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+      opacity: 0.35;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .blob-1 { width: 320px; height: 320px; background: #b0b0ff; top: -80px; left: -80px; }
+    .blob-2 { width: 260px; height: 260px; background: #a8f0c0; bottom: -60px; right: -60px; }
+
+    /* İçerik Alanı */
+    .container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 20px 40px;
+      width: 100%;
+      z-index: 5;
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 30px;
+      animation: fadeDown 0.6s ease both;
+    }
+
+    .badge {
+      display: inline-block;
+      background: rgba(70, 70, 229, 0.1);
+      color: #4646e5;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 100px;
+      margin-bottom: 12px;
+      border: 1px solid rgba(70, 70, 229, 0.2);
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 38px;
+      color: #2a2a7a;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: #6060aa;
+      font-size: 15px;
+      font-weight: 300;
+    }
+
+    /* Kayıt Kartı */
+    .auth-card {
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255,255,255,0.85);
+      border-radius: 28px;
+      padding: 40px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 20px 60px rgba(70, 70, 229, 0.1);
+      animation: fadeUp 0.7s 0.15s ease both;
+    }
+
+    /* Form Elemanları */
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #6060aa;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      padding-left: 4px;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px 18px;
+      border-radius: 14px;
+      border: 1.5px solid rgba(70, 70, 229, 0.1);
+      background: rgba(255, 255, 255, 0.6);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      color: #2a2a7a;
+      transition: all 0.3s ease;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #4646e5;
+      background: white;
+      box-shadow: 0 0 0 4px rgba(70, 70, 229, 0.05);
+    }
+
+    /* Flash Mesajları */
+    .message-list {
+      margin-bottom: 20px;
+      width: 100%;
+    }
+
+    .message {
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .message.success { background: #e8fcd4; color: #2d662d; border: 1px solid #c9e8a5; }
+    .message.error { background: #fff0f0; color: #a84444; border: 1px solid #f7d7d7; }
+
+    /* Buton */
+    .submit-btn {
+      width: 100%;
+      padding: 15px;
+      border-radius: 14px;
+      border: none;
+      background: linear-gradient(135deg, #6060e5, #4646e5);
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+      box-shadow: 0 6px 20px rgba(70, 70, 229, 0.3);
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(70, 70, 229, 0.4);
+    }
+
+    /* Alt Linkler */
+    .footer-links {
+      margin-top: 25px;
+      text-align: center;
+      font-size: 14px;
+      color: #6060aa;
+    }
+
+    .footer-links a {
+      color: #4646e5;
+      text-decoration: none;
+      font-weight: 600;
+      transition: opacity 0.2s;
+    }
+
+    .footer-links a:hover { opacity: 0.8; }
+
+    .back-home {
+      display: block;
+      margin-top: 15px;
+      font-size: 13px;
+      color: #8888bb !important;
+      font-weight: 400 !important;
+    }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Register</h1>
 
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <div class="message-list">
-                    {% for category, message in messages %}
-                        <div class="message {{ category }}">{{ message }}</div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        {% endwith %}
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
 
-        <form method="post" class="auth-form">
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username" required>
+  {% include 'base.html' %}
 
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" required>
-
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" required>
-
-            <label for="confirm_password">Confirm Password</label>
-            <input type="password" id="confirm_password" name="confirm_password" required>
-
-            <button type="submit" class="nav-btn">Register</button>
-        </form>
-
-        <p>Already have an account? <a href="{{ url_for('auth.login') }}">Login here</a>.</p>
-        <p><a href="{{ url_for('home') }}">Back to Home</a></p>
+  <div class="container">
+    <div class="page-header">
+      <div class="badge">Join the Community</div>
+      <h1>Create Account</h1>
+      <p class="subtitle">Enter your details to start using the system.</p>
     </div>
+
+    <div class="auth-card">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="message-list">
+            {% for category, message in messages %}
+              <div class="message {{ category }}">{{ message }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      <form method="post" class="auth-form">
+        <div class="field-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" placeholder="Choose a unique name" required>
+        </div>
+
+        <div class="field-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" placeholder="example@mail.com" required>
+        </div>
+
+        <div class="field-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="••••••••" required>
+        </div>
+
+        <div class="field-group">
+          <label for="confirm_password">Confirm Password</label>
+          <input type="password" id="confirm_password" name="confirm_password" placeholder="••••••••" required>
+        </div>
+
+        <button type="submit" class="submit-btn">Register Now</button>
+      </form>
+
+      <div class="footer-links">
+        <p>Already have an account? <a href="{{ url_for('auth.login') }}">Login here</a>.</p>
+        <a href="{{ url_for('home') }}" class="back-home">← Back to Home</a>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>

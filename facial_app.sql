@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Anamakine: 127.0.0.1:3307
--- Üretim Zamanı: 16 Nis 2026, 16:37:34
+-- Üretim Zamanı: 16 Nis 2026, 17:16:38
 -- Sunucu sürümü: 10.4.32-MariaDB
 -- PHP Sürümü: 8.0.30
 
@@ -31,7 +31,7 @@ CREATE TABLE `users` (
   `id` int(11) NOT NULL,
   `username` varchar(50) NOT NULL,
   `email` varchar(100) DEFAULT NULL,
-  `password` varchar(255) NOT NULL,
+  `password_hash` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -39,7 +39,7 @@ CREATE TABLE `users` (
 -- Tablo döküm verisi `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `email`, `password`, `created_at`) VALUES
+INSERT INTO `users` (`id`, `username`, `email`, `password_hash`, `created_at`) VALUES
 (1, 'sinem', 'sinem@test.com', '123456', '2026-04-16 13:51:55'),
 (2, 'zehra', 'zahra@test.com', '123456', '2026-04-16 13:52:34');
 

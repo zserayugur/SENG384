@@ -8,8 +8,7 @@ body {
 .container {
     max-width: 1000px;
     margin: 0 auto;
-    justify-content: center; 
-    align-items: center;     
+    text-align: center;
 }
 
 h1 {
@@ -24,11 +23,14 @@ p {
 }
 
 .card {
-    background: white;
-    border-radius: 10px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 8px #4040d8;
+    background: none;
+    box-shadow: none;
+    padding: 0;
+
+    display: flex;              
+    justify-content: center;    
+    gap: 15px;                  
+    flex-wrap: wrap;            
 }
 
 label {
@@ -56,11 +58,19 @@ button, .nav-btn {
     cursor: pointer;
     text-decoration: none;
     margin-top: 10px;
+
+    /* 🔥 animasyon için */
+    transition: all 0.3s ease;
 }
 
 button:hover, .nav-btn:hover {
-    text-align: center;
     background: #B9B9FF;
+
+    /* 🔥 shadow efekti */
+    box-shadow: 0 10px 25px rgba(64, 64, 216, 0.5);
+
+    /* 🔥 hafif yukarı kalkma efekti */
+    transform: translateY(-3px);
 }
 
 .image-grid {

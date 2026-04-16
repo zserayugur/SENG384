@@ -7,6 +7,16 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
+
+    <nav>
+    <img src="{{ url_for('static', filename='image/logo.png') }}" class="logo">
+    <a href="{{ url_for('home') }}">Home</a>
+    <a href="{{ url_for('upload_page') }}">Upload</a>
+    <a href="{{ url_for('controls_page') }}">Profile</a>
+    <a href="{{ url_for('preview_page') }}">Previous Results</a>
+    <a href="{{ url_for('result_page') }}">Logout</a>
+    </nav>
+    
     <div class="container">
         <h1>Facial Image Analysis System</h1>
         <p>Welcome to the project interface.</p>

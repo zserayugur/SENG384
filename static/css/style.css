@@ -58,18 +58,13 @@ button, .nav-btn {
     cursor: pointer;
     text-decoration: none;
     margin-top: 10px;
-
-    /* 🔥 animasyon için */
     transition: all 0.3s ease;
 }
 
 button:hover, .nav-btn:hover {
+    color: #4646e5;
     background: #B9B9FF;
-
-    /* 🔥 shadow efekti */
-    box-shadow: 0 10px 25px rgba(64, 64, 216, 0.5);
-
-    /* 🔥 hafif yukarı kalkma efekti */
+    box-shadow: 0 5px 5px rgba(64, 64, 216, 0.5);
     transform: translateY(-3px);
 }
 
@@ -85,4 +80,86 @@ button:hover, .nav-btn:hover {
     border: 1px solid #ccc;
     border-radius: 6px;
     display: block;
+}
+
+nav {
+    background: #B9B9FF;
+    padding: 30px;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+nav a:hover {
+    color: #4646e5;
+    transition: all 0.3s ease;;
+}
+.logo {
+    position: fixed;   /* sayfada sabit kalır */
+    top: 20px;         /* yukarıdan boşluk */
+    left: 50px;        /* soldan boşluk */
+    width: 80px;       /* boyut */
+    height: auto;
+    z-index: 1000;     /* üstte kalır */
+}
+
+.card {
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(20px);
+    padding: 40px;
+    border-radius: 20px;
+    width: 350px;
+    margin: auto;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+
+.subtitle {
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.upload-box {
+    display: block;
+    border: 2px dashed #8b8bff;
+    border-radius: 15px;
+    padding: 30px;
+    text-align: center;
+    cursor: pointer;
+    margin-bottom: 20px;
+    transition: 0.3s;
+}
+
+.upload-box:hover {
+    background: rgba(139,139,255,0.1);
+    border-color: #5a5aff;
+}
+
+.select-box {
+    width: 100%;
+    padding: 50px;
+    border-radius: 100px;
+    border: none;
+    margin-bottom: 20px;
+}
+
+.nav-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(45deg, #7f7fff, #5ad1ff);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.nav-btn:hover {
+    transform: scale(1.05);
 }

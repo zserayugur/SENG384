@@ -7,18 +7,36 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
+
     <div class="container">
         <h1>Upload Screen</h1>
 
         <div class="card">
-            <label for="original">Original Image Path</label>
-            <input type="text" id="original" value="images/original.jpg">
+            
+            <form action="/upload" method="POST" enctype="multipart/form-data">
 
-            <label for="transformed">Transformed Image Path</label>
-            <input type="text" id="transformed" value="images/transformed.jpg">
+                <label>Upload your choosen image!</label>
+                <input type="file" name="original" accept="image/*" required>
+                
+                <label> Select a transformation!</label>
 
-            <a class="nav-btn" href="/controls">Next: Controls</a>
+            <select name="operation" class="select-box">
+                <option>Smile Enhancement</option>
+                <option>Eyebrow Raising</option>
+                <option>Lip Widening</option>
+                <option>Face Slimming</option>
+                <option>Aging</option>
+                <option>De-Aging</option>
+            </select>
+            
+                <button type="submit" class="nav-btn">
+                    Upload & Continue
+                </button>
+
+            </form>
+
         </div>
     </div>
+
 </body>
 </html>

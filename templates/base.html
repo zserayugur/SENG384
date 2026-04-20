@@ -88,7 +88,7 @@
     <a href="{{ url_for('upload_page') }}">Studio</a>
     <a href="{{ url_for('preview_page') }}">History</a>
 
-    {% if current_user.is_authenticated %}
+    {% if current_user %}
       <a href="{{ url_for('auth.logout') }}" class="logout-link">Logout</a>
     {% else %}
       <a href="{{ url_for('auth.login') }}" class="login-link">Login</a>

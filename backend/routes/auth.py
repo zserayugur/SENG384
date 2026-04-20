@@ -53,16 +53,11 @@ def register():
             )
             conn.commit()
 
-            user_id = cursor.lastrowid
-
             cursor.close()
             conn.close()
 
-            session["user_id"] = user_id
-            session["username"] = username
-
-            flash("Registration successful. You are now logged in.", "success")
-            return redirect(url_for("home"))
+            flash("Registration successful! Please log in.", "success")
+            return redirect(url_for("auth.login"))
 
         except Exception as e:
             print("REGISTER ERROR TYPE:", type(e))

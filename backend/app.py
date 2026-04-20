@@ -6,7 +6,7 @@ Creating upload and results folders
 Returning a test message on the main page
 """
 
-from flask import Flask, render_template, session
+from flask import Flask, render_template, session, redirect, url_for, flash
 from flask_cors import CORS
 
 from backend.modules.utils.helpers import ensure_dir
@@ -30,17 +30,14 @@ def create_app():
 
     CORS(app)
 
-    # Basic configs
     app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "change-this-secret")
     app.config["UPLOAD_FOLDER"] = "static/uploads"
     app.config["RESULT_FOLDER"] = "static/results"
-    app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024  # 10 MB
+    app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024
 
-    # Ensure folders exist
     ensure_dir(app.config["UPLOAD_FOLDER"])
     ensure_dir(app.config["RESULT_FOLDER"])
 
-    # Register routes
     app.register_blueprint(auth_bp, url_prefix="/auth")
     app.register_blueprint(upload_bp, url_prefix="/upload")
     app.register_blueprint(process_bp, url_prefix="/process")
@@ -59,18 +56,30 @@ def create_app():
 
     @app.route("/upload-page")
     def upload_page():
+        if not session.get("user_id"):
+            flash("Please log in to access this page.", "error")
+            return redirect(url_for("auth.login"))
         return render_template("upload.html")
 
     @app.route("/controls-page")
     def controls_page():
+        if not session.get("user_id"):
+            flash("Please log in to access this page.", "error")
+            return redirect(url_for("auth.login"))
         return render_template("controls.html")
 
     @app.route("/preview-page")
     def preview_page():
+        if not session.get("user_id"):
+            flash("Please log in to access this page.", "error")
+            return redirect(url_for("auth.login"))
         return render_template("preview.html")
 
     @app.route("/result-page")
     def result_page():
+        if not session.get("user_id"):
+            flash("Please log in to access this page.", "error")
+            return redirect(url_for("auth.login"))
         return render_template("result.html")
 
     return app

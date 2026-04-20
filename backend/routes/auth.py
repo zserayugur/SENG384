@@ -1,6 +1,6 @@
+import traceback
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from werkzeug.security import check_password_hash, generate_password_hash
-
 from backend.modules.db import get_db_connection
 
 auth_bp = Blueprint("auth", __name__)
@@ -29,31 +29,46 @@ def register():
             flash("Passwords do not match.", "error")
             return render_template("register.html", **_template_context())
 
-        conn = get_db_connection()
-        cursor = conn.cursor(dictionary=True)
+        try:
+            conn = get_db_connection()
+            cursor = conn.cursor()
 
-        cursor.execute(
-            "SELECT * FROM users WHERE email = %s OR username = %s",
-            (email, username)
-        )
-        existing_user = cursor.fetchone()
+            cursor.execute(
+                "SELECT * FROM users WHERE email = %s OR username = %s",
+                (email, username)
+            )
+            existing_user = cursor.fetchone()
 
-        if existing_user:
+            if existing_user:
+                cursor.close()
+                conn.close()
+                flash("A user with that email or username already exists.", "error")
+                return render_template("register.html", **_template_context())
+
+            hashed_password = generate_password_hash(password)
+
+            cursor.execute(
+                "INSERT INTO users (username, email, password) VALUES (%s, %s, %s)",
+                (username, email, hashed_password)
+            )
+            conn.commit()
+
+            user_id = cursor.lastrowid
+
+            cursor.close()
             conn.close()
-            flash("A user with that email or username already exists.", "error")
-            return render_template("register.html", **_template_context())
 
-        hashed_password = generate_password_hash(password)
+            session["user_id"] = user_id
+            session["username"] = username
 
-        cursor.execute(
-            "INSERT INTO users (username, email, password) VALUES (%s, %s, %s)",
-            (username, email, hashed_password)
-        )
-        conn.commit()
-        conn.close()
+            flash("Registration successful. You are now logged in.", "success")
+            return redirect(url_for("home"))
 
-        flash("Registration successful. Please log in.", "success")
-        return redirect(url_for("auth.login"))
+        except Exception as e:
+            print("REGISTER ERROR TYPE:", type(e))
+            print("REGISTER ERROR REPR:", repr(e))
+            traceback.print_exc()
+            flash("Registration failed. Check terminal.", "error")
 
     return render_template("register.html", **_template_context())
 
@@ -71,25 +86,38 @@ def login():
             flash("Please enter both email and password.", "error")
             return render_template("login.html", **_template_context())
 
-        conn = get_db_connection()
-        cursor = conn.cursor(dictionary=True)
+        try:
+            conn = get_db_connection()
+            cursor = conn.cursor()
 
-        cursor.execute(
-            "SELECT * FROM users WHERE email = %s",
-            (email,)
-        )
-        user = cursor.fetchone()
-        conn.close()
+            cursor.execute(
+                "SELECT * FROM users WHERE email = %s",
+                (email,)
+            )
+            user = cursor.fetchone()
 
-        if not user or not check_password_hash(user["password"], password):
-            flash("Invalid credentials. Please try again.", "error")
-            return render_template("login.html", **_template_context())
+            cursor.close()
+            conn.close()
 
-        session["user_id"] = user["id"]
-        session["username"] = user["username"]
+            if not user:
+                flash("Invalid credentials. Please try again.", "error")
+                return render_template("login.html", **_template_context())
 
-        flash("Logged in successfully.", "success")
-        return redirect(url_for("home"))
+            if not check_password_hash(user["password"], password):
+                flash("Invalid credentials. Please try again.", "error")
+                return render_template("login.html", **_template_context())
+
+            session["user_id"] = user["id"]
+            session["username"] = user["username"]
+
+            flash("Logged in successfully.", "success")
+            return redirect(url_for("home"))
+
+        except Exception as e:
+            print("LOGIN ERROR TYPE:", type(e))
+            print("LOGIN ERROR REPR:", repr(e))
+            traceback.print_exc()
+            flash("Login failed. Check terminal.", "error")
 
     return render_template("login.html", **_template_context())
 

@@ -105,7 +105,6 @@ def login():
             session["user_id"] = user["id"]
             session["username"] = user["username"]
 
-            flash("Logged in successfully.", "success")
             return redirect(url_for("home"))
 
         except Exception as e:

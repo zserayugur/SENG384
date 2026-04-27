@@ -23,14 +23,11 @@ p {
 }
 
 .card {
-    background: none;
-    box-shadow: none;
-    padding: 0;
-
-    display: flex;              
-    justify-content: center;    
-    gap: 15px;                  
-    flex-wrap: wrap;            
+      display: grid;
+    grid-template-columns: repeat(2, 1fr);  
+    gap: 20px;
+    max-width: 700px;
+    margin: 40px auto;            
 }
 
 label {

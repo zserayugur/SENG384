@@ -25,11 +25,6 @@ FEATURE_GROUPS = {
         "upper_lip": [0, 37, 267],
         "lower_lip": [17, 84, 314],
     },
-    "face_slimming": {
-        "left_cheek_jaw": [172, 136, 150, 149],
-        "right_cheek_jaw": [397, 365, 379, 378],
-        "chin": [152],
-    },
 }
 
 
@@ -89,36 +84,23 @@ def modify_landmarks(
         dx = 28.0 * intensity
         dy = 22.0 * intensity
 
-        # Ağız köşeleri dışa ve yukarı
         pts[corners[0]] += np.array([-dx, -dy], dtype=np.float32)
         pts[corners[1]] += np.array([dx, -dy], dtype=np.float32)
 
-        # Üst dudak kavisli şekilde yukarı
         for idx in upper_lip:
             dist = abs(pts[idx][0] - center_x)
             curve = max(0.0, 1 - dist / 120.0)
-            pts[idx] += np.array(
-                [0.0, -12.0 * intensity * curve],
-                dtype=np.float32
-            )
+            pts[idx] += np.array([0.0, -12.0 * intensity * curve], dtype=np.float32)
 
-        # Alt dudak hafif aşağı, ağız daha doğal açılır
         for idx in lower_lip:
             dist = abs(pts[idx][0] - center_x)
             curve = max(0.0, 1 - dist / 120.0)
-            pts[idx] += np.array(
-                [0.0, 10.0 * intensity * curve],
-                dtype=np.float32
-            )
+            pts[idx] += np.array([0.0, 10.0 * intensity * curve], dtype=np.float32)
 
-        # Yanaklar hafif yukarı
         cheek_indices = [50, 187, 205, 425, 411, 280]
         for idx in cheek_indices:
             if idx < len(pts):
-                pts[idx] += np.array(
-                    [0.0, -6.0 * intensity],
-                    dtype=np.float32
-                )
+                pts[idx] += np.array([0.0, -6.0 * intensity], dtype=np.float32)
 
     elif expression == "eyebrow_raise":
         for idx in FEATURE_GROUPS[expression]["left_brow"] + FEATURE_GROUPS[expression]["right_brow"]:
@@ -135,22 +117,58 @@ def modify_landmarks(
         for idx in FEATURE_GROUPS[expression]["lower_lip"]:
             pts[idx] += np.array([0.0, 5.0 * intensity], dtype=np.float32)
 
-    elif expression == "face_slimming":
-        center_x = np.mean(pts[:, 0])
-
-        for idx in FEATURE_GROUPS[expression]["left_cheek_jaw"]:
-            pts[idx][0] += (center_x - pts[idx][0]) * 0.25 * intensity
-
-        for idx in FEATURE_GROUPS[expression]["right_cheek_jaw"]:
-            pts[idx][0] += (center_x - pts[idx][0]) * 0.25 * intensity
-
-        for idx in FEATURE_GROUPS[expression]["chin"]:
-            pts[idx][1] -= 6.0 * intensity
-
     for i in range(len(pts)):
         pts[i] = _clip_point(pts[i], w, h)
 
     return pts
+
+
+def apply_face_slimming_smooth(
+    image: np.ndarray,
+    landmarks: Sequence[Point],
+    intensity: float = 0.5,
+) -> np.ndarray:
+    h, w = image.shape[:2]
+    intensity = float(np.clip(intensity, 0.0, 1.0))
+    pts = np.array(landmarks, dtype=np.float32)
+
+    map_x, map_y = np.meshgrid(
+        np.arange(w, dtype=np.float32),
+        np.arange(h, dtype=np.float32)
+    )
+
+    left_indices = [234, 93, 132, 58, 172, 136, 150, 149]
+    right_indices = [454, 323, 361, 288, 397, 365, 379, 378]
+
+    radius = 85.0
+    strength = 14.0 * intensity
+
+    for left_idx, right_idx in zip(left_indices, right_indices):
+        if left_idx >= len(pts) or right_idx >= len(pts):
+            continue
+
+        for point, direction in [(pts[left_idx], 1), (pts[right_idx], -1)]:
+            px, py = point
+
+            dx = map_x - px
+            dy = map_y - py
+            dist = np.sqrt(dx * dx + dy * dy)
+
+            mask = dist < radius
+            falloff = np.clip(1 - (dist / radius) ** 2, 0, 1)
+            pull = strength * falloff * mask
+
+            map_x += direction * pull
+
+    slimmed = cv2.remap(
+        image,
+        map_x,
+        map_y,
+        interpolation=cv2.INTER_LINEAR,
+        borderMode=cv2.BORDER_REFLECT_101
+    )
+
+    return slimmed
 
 
 def delaunay_triangulation(image_shape, landmarks: Sequence[Point]) -> List[Triangle]:
@@ -265,14 +283,10 @@ def warp_triangles(
                 + warped_patch * mask
             )
 
-        accum_mask[y1:y2, x1:x2] = np.maximum(
-            accum_mask[y1:y2, x1:x2],
-            mask
-        )
+        accum_mask[y1:y2, x1:x2] = np.maximum(accum_mask[y1:y2, x1:x2], mask)
 
     if image.ndim == 3:
-        accum_mask_3 = accum_mask[..., None]
-        output = output + image * (1.0 - accum_mask_3)
+        output = output + image * (1.0 - accum_mask[..., None])
     else:
         output = output + image * (1.0 - accum_mask)
 
@@ -292,6 +306,14 @@ def apply_expression(
 
     if len(src_landmarks) < 3:
         raise ValueError("At least 3 landmarks are required.")
+
+    if expression == "face_slimming":
+        warped = apply_face_slimming_smooth(
+            image=image,
+            landmarks=src_landmarks,
+            intensity=intensity
+        )
+        return warped, src_landmarks, []
 
     dst_landmarks = modify_landmarks(
         src_landmarks,

@@ -1,6 +1,8 @@
 import os
 import shutil
 import cv2
+import numpy as np
+
 from flask import Blueprint, request, current_app
 from werkzeug.utils import secure_filename
 
@@ -26,15 +28,32 @@ TRANSFORM_MAP = {
 
 def apply_aging_effect(image, intensity=0.5):
     intensity = float(max(0.0, min(1.0, intensity)))
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    aged = image.copy()
+
+    gray = cv2.cvtColor(aged, cv2.COLOR_BGR2GRAY)
     gray_bgr = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
-    return cv2.addWeighted(image, 1 - intensity, gray_bgr, intensity, 0)
+
+    aged = cv2.addWeighted(
+        aged,
+        1 - 0.35 * intensity,
+        gray_bgr,
+        0.35 * intensity,
+        0
+    )
+
+    return aged
 
 
 def apply_deaging_effect(image, intensity=0.5):
     intensity = float(max(0.0, min(1.0, intensity)))
-    smooth = cv2.bilateralFilter(image, 9, 75, 75)
-    return cv2.addWeighted(image, 1 - intensity, smooth, intensity, 0)
+
+    smooth = cv2.bilateralFilter(image, 15, 90, 90)
+    deaged = cv2.addWeighted(image, 1 - intensity, smooth, intensity, 0)
+
+    bright = np.full_like(deaged, (12, 12, 12))
+    deaged = cv2.addWeighted(deaged, 1.0, bright, 0.25 * intensity, 0)
+
+    return deaged
 
 
 @upload_bp.route("/", methods=["POST"])
@@ -60,7 +79,9 @@ def upload_image():
 
     intensity = max(0.0, min(1.0, intensity))
 
-    if transform_type not in TRANSFORM_MAP and transform_type not in {"aging", "deaging"}:
+    valid_extra_transforms = {"aging", "deaging", "landmarks"}
+
+    if transform_type not in TRANSFORM_MAP and transform_type not in valid_extra_transforms:
         return error_response("Invalid transform_type.", 400)
 
     filename = secure_filename(file.filename)
@@ -82,7 +103,18 @@ def upload_image():
         return error_response("Image could not be read.", 400)
 
     try:
-        if transform_type in TRANSFORM_MAP:
+        if transform_type == "landmarks":
+            landmark_result = process_landmark_pipeline(image)
+
+            if not landmark_result["success"]:
+                return error_response(
+                    landmark_result["validation"]["reason"],
+                    400
+                )
+
+            output_image = landmark_result["image_with_landmarks"]
+
+        elif transform_type in TRANSFORM_MAP:
             landmark_result = process_landmark_pipeline(image)
 
             if not landmark_result["success"]:

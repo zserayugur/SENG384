@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +8,11 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap');
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
     body {
       min-height: 100vh;
@@ -20,7 +25,6 @@
       overflow-x: hidden;
     }
 
-    /* Arka Plan Efektleri */
     .blob {
       position: absolute;
       border-radius: 50%;
@@ -29,10 +33,23 @@
       pointer-events: none;
       z-index: 0;
     }
-    .blob-1 { width: 320px; height: 320px; background: #b0b0ff; top: -80px; left: -80px; }
-    .blob-2 { width: 260px; height: 260px; background: #a8f0c0; bottom: -60px; right: -60px; }
 
-    /* İçerik Konteynırı */
+    .blob-1 {
+      width: 320px;
+      height: 320px;
+      background: #b0b0ff;
+      top: -80px;
+      left: -80px;
+    }
+
+    .blob-2 {
+      width: 260px;
+      height: 260px;
+      background: #a8f0c0;
+      bottom: -60px;
+      right: -60px;
+    }
+
     .container {
       flex: 1;
       display: flex;
@@ -71,7 +88,6 @@
       margin-bottom: 10px;
     }
 
-    /* Kart Yapıları */
     .dashboard-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -83,14 +99,16 @@
       background: rgba(255, 255, 255, 0.72);
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
-      border: 1px solid rgba(255,255,255,0.85);
+      border: 1px solid rgba(255, 255, 255, 0.85);
       border-radius: 24px;
       padding: 30px;
       box-shadow: 0 15px 45px rgba(70, 70, 229, 0.08);
       animation: fadeUp 0.7s ease both;
     }
 
-    .card.full-width { grid-column: span 2; }
+    .card.full-width {
+      grid-column: span 2;
+    }
 
     h2 {
       font-size: 16px;
@@ -102,7 +120,6 @@
       gap: 10px;
     }
 
-    /* Analiz Bölümü */
     .input-group {
       margin-bottom: 20px;
     }
@@ -145,7 +162,6 @@
       box-shadow: 0 12px 28px rgba(70, 70, 229, 0.35);
     }
 
-    /* Veri Alanları */
     .data-box {
       background: rgba(70, 70, 229, 0.04);
       border-radius: 16px;
@@ -154,9 +170,9 @@
       font-size: 14px;
       min-height: 100px;
       border: 1px solid rgba(70, 70, 229, 0.05);
+      line-height: 1.8;
     }
 
-    /* Spektrum Görüntüleri */
     .image-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -189,21 +205,41 @@
     }
 
     @keyframes fadeDown {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(24px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     @media (max-width: 768px) {
-      .dashboard-grid { grid-template-columns: 1fr; }
-      .card.full-width { grid-column: span 1; }
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .card.full-width {
+        grid-column: span 1;
+      }
     }
   </style>
 </head>
+
 <body>
 
   <div class="blob blob-1"></div>
@@ -220,23 +256,30 @@
     <div class="dashboard-grid">
       <div class="card">
         <h2>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+          </svg>
           System Control
         </h2>
+
         <div class="input-group">
           <label>Original Image Source</label>
-          <input type="text" id="original" value="images/original.jpg" readonly>
+          <input type="text" id="original" value="static/uploads/original.jpg" readonly>
         </div>
+
         <div class="input-group">
           <label>Transformed Image Source</label>
-          <input type="text" id="transformed" value="images/transformed.jpg" readonly>
+          <input type="text" id="transformed" value="static/uploads/transformed.jpg" readonly>
         </div>
+
         <button id="analyzeBtn">Run Analysis</button>
       </div>
 
       <div class="card">
         <h2>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20v-6M6 20V10M18 20V4"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 20v-6M6 20V10M18 20V4" />
+          </svg>
           Metrics
         </h2>
         <div id="metricsResult" class="data-box">No results yet. Run analysis to see details.</div>
@@ -244,7 +287,9 @@
 
       <div class="card full-width">
         <h2>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+          </svg>
           Energy Analysis
         </h2>
         <div id="energyResult" class="data-box">Energy distribution data will appear here.</div>
@@ -252,9 +297,13 @@
 
       <div class="card full-width">
         <h2>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 12h18M12 3v18"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <path d="M3 12h18M12 3v18" />
+          </svg>
           Spectrum Images
         </h2>
+
         <div class="image-grid">
           <div class="spectrum-box">
             <p>Original Spectrum</p>
@@ -262,6 +311,7 @@
               <img id="originalSpectrum" src="" alt="Waiting for data...">
             </div>
           </div>
+
           <div class="spectrum-box">
             <p>Transformed Spectrum</p>
             <div class="img-frame">
@@ -273,6 +323,70 @@
     </div>
   </div>
 
-  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  <script>
+    document.getElementById("analyzeBtn").addEventListener("click", async function () {
+      const originalPath = document.getElementById("original").value;
+      const transformedPath = document.getElementById("transformed").value;
+
+      document.getElementById("metricsResult").innerHTML = "Analyzing...";
+      document.getElementById("energyResult").innerHTML = "Calculating energy data...";
+
+      try {
+        const response = await fetch("/analyze/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            original_path: originalPath,
+            transformed_path: transformedPath
+          })
+        });
+
+        const result = await response.json();
+
+        if (!result.success) {
+          alert(result.message || "Analysis failed.");
+          document.getElementById("metricsResult").innerHTML = "Analysis failed.";
+          document.getElementById("energyResult").innerHTML = "Analysis failed.";
+          return;
+        }
+
+        const data = result.data;
+        const metrics = data.metrics;
+        const energy = data.energy;
+
+        document.getElementById("metricsResult").innerHTML = `
+          <strong>MSE:</strong> ${Number(metrics.mse).toFixed(4)}<br>
+          <strong>PSNR:</strong> ${Number(metrics.psnr).toFixed(4)}<br>
+          <strong>SSIM:</strong> ${Number(metrics.ssim).toFixed(4)}
+        `;
+
+        document.getElementById("energyResult").innerHTML = `
+          <strong>Original Energy:</strong> ${Number(energy.original).toFixed(2)}<br>
+          <strong>Transformed Energy:</strong> ${Number(energy.transformed).toFixed(2)}<br>
+          <strong>Original Low Energy:</strong> ${Number(energy.original_low || 0).toFixed(2)}<br>
+          <strong>Original High Energy:</strong> ${Number(energy.original_high || 0).toFixed(2)}<br>
+          <strong>Transformed Low Energy:</strong> ${Number(energy.transformed_low || 0).toFixed(2)}<br>
+          <strong>Transformed High Energy:</strong> ${Number(energy.transformed_high || 0).toFixed(2)}<br>
+          <strong>Original Ratio:</strong> ${Number(energy.original_ratio).toFixed(4)}<br>
+          <strong>Transformed Ratio:</strong> ${Number(energy.transformed_ratio).toFixed(4)}
+        `;
+
+        document.getElementById("originalSpectrum").src =
+          "/static/results/original_spectrum.png?v=" + Date.now();
+
+        document.getElementById("transformedSpectrum").src =
+          "/static/results/transformed_spectrum.png?v=" + Date.now();
+
+      } catch (error) {
+        alert("Analysis error: " + error);
+        document.getElementById("metricsResult").innerHTML = "Analysis error.";
+        document.getElementById("energyResult").innerHTML = "Analysis error.";
+      }
+    });
+  </script>
+
 </body>
+
 </html>

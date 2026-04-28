@@ -2,3 +2,7 @@
 venv/
 __pycache__/
 .DS_Store
+echo ".venv311/" >> .gitignore
+.venv311/
+venv311/
+*.pyc

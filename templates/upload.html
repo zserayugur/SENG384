@@ -1,8 +1,11 @@
-
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap');
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
 
   .upload-page {
     min-height: 100vh;
@@ -24,9 +27,30 @@
     opacity: 0.35;
     pointer-events: none;
   }
-  .blob-1 { width: 320px; height: 320px; background: #b0b0ff; top: -80px; left: -80px; }
-  .blob-2 { width: 260px; height: 260px; background: #a8f0c0; bottom: -60px; right: -60px; }
-  .blob-3 { width: 180px; height: 180px; background: #ffd6f0; top: 40%; left: 10%; }
+
+  .blob-1 {
+    width: 320px;
+    height: 320px;
+    background: #b0b0ff;
+    top: -80px;
+    left: -80px;
+  }
+
+  .blob-2 {
+    width: 260px;
+    height: 260px;
+    background: #a8f0c0;
+    bottom: -60px;
+    right: -60px;
+  }
+
+  .blob-3 {
+    width: 180px;
+    height: 180px;
+    background: #ffd6f0;
+    top: 40%;
+    left: 10%;
+  }
 
   .page-header {
     text-align: center;
@@ -66,12 +90,12 @@
     background: rgba(255, 255, 255, 0.72);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
-    border: 1px solid rgba(255,255,255,0.85);
+    border: 1px solid rgba(255, 255, 255, 0.85);
     border-radius: 28px;
     padding: 44px 48px;
     width: 100%;
     max-width: 480px;
-    box-shadow: 0 20px 60px rgba(70, 70, 229, 0.1), 0 4px 20px rgba(0,0,0,0.06);
+    box-shadow: 0 20px 60px rgba(70, 70, 229, 0.1), 0 4px 20px rgba(0, 0, 0, 0.06);
     animation: fadeUp 0.7s 0.15s ease both;
   }
 
@@ -167,7 +191,8 @@
   .transform-option input[type="radio"] {
     position: absolute;
     opacity: 0;
-    width: 0; height: 0;
+    width: 0;
+    height: 0;
   }
 
   .transform-option label {
@@ -182,7 +207,7 @@
     color: #4a4a8a;
     cursor: pointer;
     transition: all 0.2s ease;
-    background: rgba(255,255,255,0.6);
+    background: rgba(255, 255, 255, 0.6);
     white-space: nowrap;
   }
 
@@ -195,20 +220,43 @@
     transition: background 0.2s;
   }
 
-  .transform-option input:checked + label {
+  .transform-option input:checked+label {
     border-color: #4646e5;
     background: rgba(70, 70, 229, 0.08);
     color: #4646e5;
     font-weight: 500;
   }
 
-  .transform-option input:checked + label .dot {
+  .transform-option input:checked+label .dot {
     background: #4646e5;
   }
 
   .transform-option label:hover {
     border-color: rgba(70, 70, 229, 0.4);
     background: rgba(70, 70, 229, 0.05);
+  }
+
+  .intensity-control {
+    margin-bottom: 28px;
+  }
+
+  .intensity-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .intensity-value {
+    font-size: 13px;
+    color: #4646e5;
+    font-weight: 600;
+  }
+
+  .intensity-control input[type="range"] {
+    width: 100%;
+    accent-color: #4646e5;
+    cursor: pointer;
   }
 
   .submit-btn {
@@ -254,16 +302,32 @@
   }
 
   @keyframes fadeDown {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(24px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 </style>
+
 {% include 'base.html' %}
+
 <div class="upload-page">
   <div class="blob blob-1"></div>
   <div class="blob blob-2"></div>
@@ -291,31 +355,46 @@
     </div>
 
     <span class="field-label">Choose a transformation</span>
+
     <div class="transform-grid">
       <div class="transform-option">
         <input type="radio" name="operation" id="opt1" value="Smile Enhancement" checked>
         <label for="opt1"><span class="dot"></span>Smile Enhance</label>
       </div>
+
       <div class="transform-option">
         <input type="radio" name="operation" id="opt2" value="Eyebrow Raising">
         <label for="opt2"><span class="dot"></span>Eyebrow Raise</label>
       </div>
+
       <div class="transform-option">
         <input type="radio" name="operation" id="opt3" value="Lip Widening">
         <label for="opt3"><span class="dot"></span>Lip Widening</label>
       </div>
+
       <div class="transform-option">
         <input type="radio" name="operation" id="opt4" value="Face Slimming">
         <label for="opt4"><span class="dot"></span>Face Slimming</label>
       </div>
+
       <div class="transform-option">
         <input type="radio" name="operation" id="opt5" value="Aging">
         <label for="opt5"><span class="dot"></span>Aging</label>
       </div>
+
       <div class="transform-option">
         <input type="radio" name="operation" id="opt6" value="De-Aging">
         <label for="opt6"><span class="dot"></span>De-Aging</label>
       </div>
+    </div>
+
+    <div class="intensity-control">
+      <div class="intensity-row">
+        <span class="field-label" id="intensityLabel">Transformation Intensity</span>
+        <span class="intensity-value" id="intensityValue">50%</span>
+      </div>
+
+      <input type="range" id="intensity" min="0" max="1" step="0.1" value="0.5">
     </div>
 
     <button class="submit-btn" type="button" onclick="handleSubmit()">
@@ -329,47 +408,78 @@
 </div>
 
 <script>
-function handleFile(e) {
-  const file = e.target.files[0];
-  if (file) {
-    document.getElementById('fileName').textContent = file.name;
-    const zone = document.getElementById('uploadZone');
-    zone.style.borderColor = 'rgba(70,70,229,0.7)';
-    zone.style.background = 'rgba(70,70,229,0.08)';
-  }
-}
+  function handleFile(e) {
+    const file = e.target.files[0];
 
-async function handleSubmit() {
-  const file = document.getElementById('fileInput').files[0];
-  const op = document.querySelector('input[name="operation"]:checked');
+    if (file) {
+      document.getElementById('fileName').textContent = file.name;
 
-  if (!file) {
-    alert('Please select an image first.');
-    return;
+      const zone = document.getElementById('uploadZone');
+      zone.style.borderColor = 'rgba(70,70,229,0.7)';
+      zone.style.background = 'rgba(70,70,229,0.08)';
+    }
   }
 
-  const formData = new FormData();
-  formData.append("image", file);
-  formData.append("operation", op.value);
+  function mapOperation(op) {
+    if (op === "Smile Enhancement") return "smile";
+    if (op === "Eyebrow Raising") return "eyebrow";
+    if (op === "Lip Widening") return "lip_widen";
+    if (op === "Face Slimming") return "slim_face";
+    if (op === "Aging") return "aging";
+    if (op === "De-Aging") return "deaging";
+    return "smile";
+  }
 
-  try {
-    const response = await fetch("/upload/", {
-      method: "POST",
-      body: formData
+  const intensityInput = document.getElementById("intensity");
+  const intensityValue = document.getElementById("intensityValue");
+  const intensityLabel = document.getElementById("intensityLabel");
+
+  intensityInput.addEventListener("input", function () {
+    intensityValue.textContent = Math.round(Number(this.value) * 100) + "%";
+  });
+
+  document.querySelectorAll('input[name="operation"]').forEach((radio) => {
+    radio.addEventListener("change", function () {
+      if (this.value === "Smile Enhancement") {
+        intensityLabel.textContent = "Smile Intensity";
+      } else {
+        intensityLabel.textContent = "Transformation Intensity";
+      }
     });
+  });
 
-    const data = await response.json();
+  async function handleSubmit() {
+    const file = document.getElementById('fileInput').files[0];
+    const op = document.querySelector('input[name="operation"]:checked');
 
-    if (!data.success) {
-      alert(data.message || "Upload failed.");
+    if (!file) {
+      alert('Please select an image first.');
       return;
     }
 
-    // başarılıysa preview'e git
-    window.location.href = "/preview-page";
+    const formData = new FormData();
 
-  } catch (error) {
-    alert("Upload failed: " + error);
+    formData.append("image", file);
+    formData.append("transform_type", mapOperation(op.value));
+    formData.append("intensity", intensityInput.value);
+
+    try {
+      const response = await fetch("/upload/", {
+        method: "POST",
+        body: formData
+      });
+
+      const data = await response.json();
+
+      if (!data.success) {
+        alert(data.message || "Upload failed.");
+        return;
+      }
+
+      window.location.href = "/preview-page";
+
+    } catch (error) {
+      alert("Upload failed: " + error);
+    }
   }
-}
 </script>

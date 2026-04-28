@@ -1,8 +1,12 @@
 .venv/
 venv/
 __pycache__/
+<<<<<<< HEAD
 .DS_Store
 echo ".venv311/" >> .gitignore
 .venv311/
 venv311/
 *.pyc
+=======
+.DS_Store
+>>>>>>> parent of 3300242 (.)

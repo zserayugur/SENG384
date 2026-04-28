@@ -40,6 +40,18 @@ def upload_image():
     file_path = os.path.join(upload_folder, filename)
 
     file.save(file_path)
+    # --- EK BAŞLANGIÇ ---
+    # Preview için sabit dosya üret
+    original_path = os.path.join(upload_folder, "original.jpg")
+    transformed_path = os.path.join(upload_folder, "transformed.jpg")
+
+    # uploaded file → original.jpg
+    import shutil
+    shutil.copy(file_path, original_path)
+
+    # geçici olarak transformed da aynı (transform bağlanınca değişecek)
+    shutil.copy(file_path, transformed_path)
+    # --- EK BİTİŞ ---
 
     return success_response(
         "Image uploaded successfully.",

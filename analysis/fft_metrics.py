@@ -165,10 +165,10 @@ def analyze_images(original_path, transformed_path):
     ssim_value = compute_ssim(original_gray, transformed_gray)
 
     # Save spectrum images
-    os.makedirs("results", exist_ok=True)
+    os.makedirs("static/results", exist_ok=True)
 
-    save_spectrum_image(original_spectrum, "results/original_spectrum.png", "Original Spectrum")
-    save_spectrum_image(transformed_spectrum, "results/transformed_spectrum.png", "Transformed Spectrum")
+    save_spectrum_image(original_spectrum, "static/results/original_spectrum.png", "Original Spectrum")
+    save_spectrum_image(transformed_spectrum, "static/results/transformed_spectrum.png", "Transformed Spectrum")
 
     # Result dictionary
     results = {
@@ -189,9 +189,9 @@ def analyze_images(original_path, transformed_path):
             "ratio_difference": transformed_ratio - original_ratio
         },
         "outputs": {
-            "original_spectrum": "results/original_spectrum.png",
-            "transformed_spectrum": "results/transformed_spectrum.png"
-        }
+        "original_spectrum": "/static/results/original_spectrum.png",
+        "transformed_spectrum": "/static/results/transformed_spectrum.png"
+    }
     }
 
     return results

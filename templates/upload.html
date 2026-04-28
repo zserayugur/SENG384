@@ -338,13 +338,38 @@ function handleFile(e) {
     zone.style.background = 'rgba(70,70,229,0.08)';
   }
 }
-function handleSubmit() {
+
+async function handleSubmit() {
   const file = document.getElementById('fileInput').files[0];
   const op = document.querySelector('input[name="operation"]:checked');
+
   if (!file) {
     alert('Please select an image first.');
     return;
   }
-  alert('Uploading: ' + file.name + '\nTransformation: ' + op.value);
+
+  const formData = new FormData();
+  formData.append("image", file);
+  formData.append("operation", op.value);
+
+  try {
+    const response = await fetch("/upload/", {
+      method: "POST",
+      body: formData
+    });
+
+    const data = await response.json();
+
+    if (!data.success) {
+      alert(data.message || "Upload failed.");
+      return;
+    }
+
+    // başarılıysa preview'e git
+    window.location.href = "/preview-page";
+
+  } catch (error) {
+    alert("Upload failed: " + error);
+  }
 }
 </script>

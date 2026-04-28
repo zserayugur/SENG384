@@ -1,7 +1,7 @@
 # =====================================================
 # ANALYSIS ROUTE
 # Endpoint for FFT and analysis operations
-# Sinem's FFT module is integrated here
+# FFT module is integrated here
 # =====================================================
 
 from flask import Blueprint, request

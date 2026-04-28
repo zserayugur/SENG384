@@ -12,9 +12,9 @@ from backend.modules.utils.helpers import (
     success_response,
     timestamped_filename,
 )
-
-from backend.modules.landmark.landmark import process_landmark_pipeline
-from backend.modules.warping.warping import apply_expression
+import shutil
+#from backend.modules.landmark.landmark import process_landmark_pipeline
+#from backend.modules.warping.warping import apply_expression
 
 upload_bp = Blueprint("upload", __name__)
 
@@ -89,7 +89,6 @@ def upload_image():
 
     upload_folder = current_app.config["UPLOAD_FOLDER"]
     file_path = os.path.join(upload_folder, filename)
-
     file.save(file_path)
 
     original_path = os.path.join(upload_folder, "original.jpg")
@@ -103,38 +102,16 @@ def upload_image():
         return error_response("Image could not be read.", 400)
 
     try:
-        if transform_type == "landmarks":
-            landmark_result = process_landmark_pipeline(image)
-
-            if not landmark_result["success"]:
-                return error_response(
-                    landmark_result["validation"]["reason"],
-                    400
-                )
-
-            output_image = landmark_result["image_with_landmarks"]
-
-        elif transform_type in TRANSFORM_MAP:
-            landmark_result = process_landmark_pipeline(image)
-
-            if not landmark_result["success"]:
-                return error_response(
-                    landmark_result["validation"]["reason"],
-                    400
-                )
-
-            output_image, dst_landmarks, triangles = apply_expression(
-                image=image,
-                landmarks=landmark_result["landmarks"],
-                expression=TRANSFORM_MAP[transform_type],
-                intensity=intensity
-            )
-
-        elif transform_type == "aging":
+        if transform_type == "aging":
             output_image = apply_aging_effect(image, intensity)
 
-        else:
+        elif transform_type == "deaging":
             output_image = apply_deaging_effect(image, intensity)
+
+        else:
+            # Mediapipe/landmark pipeline disabled for now.
+            # Temporary fallback: use uploaded image as transformed image.
+            output_image = image.copy()
 
         saved = cv2.imwrite(transformed_path, output_image)
 
